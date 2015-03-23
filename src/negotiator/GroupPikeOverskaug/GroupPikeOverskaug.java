@@ -2,6 +2,8 @@ package negotiator.GroupPikeOverskaug;
 
 import java.util.*;
 
+import agents.bayesianopponentmodel.BayesianOpponentModel;
+import agents.bayesianopponentmodel.OpponentModel;
 import negotiator.Bid;
 import negotiator.DeadlineType;
 import negotiator.Timeline;
@@ -19,11 +21,12 @@ import negotiator.utility.UtilitySpace;
  * This is your negotiation party.
  */
 public class GroupPikeOverskaug extends AbstractNegotiationParty {
-    private int numberOfParties;
     private MultiTreeMap possibleBids;
     private double lastUtility;
     private double utilityThreshold;
     private double MAX_UTILITY = 1.0;
+    private ArrayList<Issue> issues;
+    private ArrayList<BayesianOpponentModel> opponentModels = new ArrayList<BayesianOpponentModel>();
 
 	/**
 	 * Please keep this constructor. This is called by genius.
@@ -40,7 +43,7 @@ public class GroupPikeOverskaug extends AbstractNegotiationParty {
 		// Make sure that this constructor calls it's parent.
 		super(utilitySpace, deadlines, timeline, randomSeed);
 
-        ArrayList<Issue> issues = utilitySpace.getDomain().getIssues();
+        issues = utilitySpace.getDomain().getIssues();
         try {
             possibleBids = generateBids(issues, 0, issues.size(), null);
         } catch (Exception e) {
@@ -81,6 +84,19 @@ public class GroupPikeOverskaug extends AbstractNegotiationParty {
             Bid lastBid = ((Offer)action).getBid();
             try {
                 lastUtility = utilitySpace.getUtility(lastBid);
+                if (opponentModels.size() == 0) {
+                    for (int i = 0; i < getNumberOfParties() - 1; i++) {
+                        opponentModels.add(new BayesianOpponentModel(utilitySpace));
+                    }
+                }
+                opponentModels.get(0).updateBeliefs(lastBid);
+                utilitySpace.getDomain().getIssues();
+                for (int i = 0; i < issues.size(); i++) {
+                    System.out.print(opponentModels.get(0).getExpectedWeight(i) + ", ");
+                    System.out.println();
+                }
+                System.out.println();
+                System.out.println("*************************'");
                 //TODO store information about opponents bid/preferences in opponentmodel
             } catch (Exception e) {
                 e.printStackTrace();
