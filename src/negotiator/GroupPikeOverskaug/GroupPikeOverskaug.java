@@ -27,7 +27,7 @@ public class GroupPikeOverskaug extends AbstractNegotiationParty {
     private double utilityThreshold;
     private double MAX_UTILITY = 1.0;
     private ArrayList<Issue> issues;
-    private HashMap<AgentID, FrequencyOpponentModel> opponentModels = new ArrayList<AgentID, FrequencyOpponentModel>();
+    private HashMap<AgentID, FrequencyOpponentModel> opponentModels = new HashMap<AgentID, FrequencyOpponentModel>();
 
 	/**
 	 * Please keep this constructor. This is called by genius.
@@ -111,7 +111,8 @@ public class GroupPikeOverskaug extends AbstractNegotiationParty {
         ArrayList<Bid> bidList = new ArrayList<Bid>();
         Iterator iterator = bidMap.entrySet().iterator();
         while (iterator.hasNext()) {
-            ArrayList<Bid> bids = (ArrayList<Bid>)iterator.next();
+            Map.Entry pair = (Map.Entry) iterator.next();
+            ArrayList<Bid> bids = (ArrayList<Bid>) pair.getValue();
             for (Bid bid : bids) {
                 bidList.add(bid);
             }
@@ -156,7 +157,8 @@ public class GroupPikeOverskaug extends AbstractNegotiationParty {
             double accumulatedUtility2 = 0;
             Iterator iterator = opponentModels.entrySet().iterator();
             while(iterator.hasNext()) {
-                FrequencyOpponentModel frequencyOpponentModel = (FrequencyOpponentModel) iterator.next();
+                Map.Entry pair = (Map.Entry) iterator.next();
+                FrequencyOpponentModel frequencyOpponentModel = (FrequencyOpponentModel) pair.getValue();
                 accumulatedUtility1 += frequencyOpponentModel.getUtility(bid1);
                 accumulatedUtility2 += frequencyOpponentModel.getUtility(bid2);
             }
