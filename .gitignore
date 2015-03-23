@@ -1,0 +1,7 @@
+bin/
+Log*.csv
+DataObjects/
+.idea/
+*.iml
+out/
+genius_docs/
