@@ -28,12 +28,12 @@ public class FrequencyOpponentModel
             }
             frequencyMap.put(issue, valueMap);
         }
-
     }
 
     public void updateModel(Bid bid) {
         for (Issue issue : bid.getIssues()) {
             List<ValueDiscrete> values = ((IssueDiscrete)issue).getValues();
+            System.out.println("Issue: " + issue.getName() + " has values: " + values);
             HashMap<Integer, Integer> valueMap = frequencyMap.get(issue);
             for (int valueIndex = 0; valueIndex < values.size(); valueIndex++) {
                 valueMap.put(valueIndex, valueMap.get(valueIndex) + 1);
