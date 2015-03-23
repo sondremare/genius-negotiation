@@ -4,6 +4,7 @@ import java.util.*;
 
 import agents.bayesianopponentmodel.BayesianOpponentModel;
 import agents.bayesianopponentmodel.OpponentModel;
+import negotiator.AgentID;
 import negotiator.Bid;
 import negotiator.DeadlineType;
 import negotiator.Timeline;
@@ -26,7 +27,7 @@ public class GroupPikeOverskaug extends AbstractNegotiationParty {
     private double utilityThreshold;
     private double MAX_UTILITY = 1.0;
     private ArrayList<Issue> issues;
-    private ArrayList<BayesianOpponentModel> opponentModels = new ArrayList<BayesianOpponentModel>();
+    private HashMap<AgentID, FrequencyOpponentModel> opponentModels = new ArrayList<AgentID, FrequencyOpponentModel>();
 
 	/**
 	 * Please keep this constructor. This is called by genius.
@@ -81,23 +82,17 @@ public class GroupPikeOverskaug extends AbstractNegotiationParty {
 		super.receiveMessage(sender, action);
 
         if (action instanceof Offer) {
-            Bid lastBid = ((Offer)action).getBid();
+            Offer offer = (Offer) action;
+            Bid lastBid = offer.getBid();
+            AgentID agentId = offer.getAgent();
             try {
                 lastUtility = utilitySpace.getUtility(lastBid);
                 if (opponentModels.size() == 0) {
                     for (int i = 0; i < getNumberOfParties() - 1; i++) {
-                        opponentModels.add(new BayesianOpponentModel(utilitySpace));
+                        opponentModels.put(action.getAgent(), new FrequencyOpponentModel(utilitySpace));
                     }
                 }
-                opponentModels.get(0).updateBeliefs(lastBid);
-                utilitySpace.getDomain().getIssues();
-                for (int i = 0; i < issues.size(); i++) {
-                    System.out.print(opponentModels.get(0).getExpectedWeight(i) + ", ");
-                    System.out.println();
-                }
-                System.out.println();
-                System.out.println("*************************'");
-                //TODO store information about opponents bid/preferences in opponentmodel
+                opponentModels.get(agentId).updateModel(lastBid);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -107,9 +102,21 @@ public class GroupPikeOverskaug extends AbstractNegotiationParty {
 	}
 
     public Bid findBestBid() {
-        SortedMap<Double, ArrayList<Bid>> viableBids = possibleBids.getBidsOverThreshold(utilityThreshold);
-        //TODO Search the map for a bid with good utility for opponents based on opponentModel
-        return viableBids.get(1.0).get(0);
+        ArrayList<Bid> bids = listBids(possibleBids.getBidsOverThreshold(utilityThreshold));
+        Collections.sort(bids, new BidComparator());
+        return bids.get(0);
+    }
+
+    public ArrayList<Bid> listBids(SortedMap<Double, ArrayList<Bid>> bidMap) {
+        ArrayList<Bid> bidList = new ArrayList<Bid>();
+        Iterator iterator = bidMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            ArrayList<Bid> bids = (ArrayList<Bid>)iterator.next();
+            for (Bid bid : bids) {
+                bidList.add(bid);
+            }
+        }
+        return bidList;
     }
 
     public double concede(double minUtility) {
@@ -137,6 +144,30 @@ public class GroupPikeOverskaug extends AbstractNegotiationParty {
             }
         }
         return bidList;
+    }
+
+    private class BidComparator implements Comparator {
+
+        @Override
+        public int compare(Object o1, Object o2) {
+            Bid bid1 = (Bid) o1;
+            Bid bid2 = (Bid) o2;
+            double accumulatedUtility1 = 0;
+            double accumulatedUtility2 = 0;
+            Iterator iterator = opponentModels.entrySet().iterator();
+            while(iterator.hasNext()) {
+                FrequencyOpponentModel frequencyOpponentModel = (FrequencyOpponentModel) iterator.next();
+                accumulatedUtility1 += frequencyOpponentModel.getUtility(bid1);
+                accumulatedUtility2 += frequencyOpponentModel.getUtility(bid2);
+            }
+            if (accumulatedUtility1 > accumulatedUtility2) {
+                return 1;
+            } else if (accumulatedUtility1 < accumulatedUtility2) {
+                return -1;
+            } else {
+                return 0;
+            }
+        }
     }
 
 }
