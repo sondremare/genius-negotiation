@@ -37,10 +37,8 @@ public class FrequencyOpponentModel
             Value issueValue = findValue(bid, issueIndex);
             HashMap<Value, Integer> valueMap = frequencyMap.get(issue);
             valueMap.put(issueValue, valueMap.get(issueValue) + 1);
-//            System.out.println(valueMap);
             totalValuesCount++;
         }
-        System.out.println("**************************");
     }
 
     public double getUtility(Bid bid) {
@@ -53,7 +51,6 @@ public class FrequencyOpponentModel
             double weight = valueMap.get(issueValue) / totalValuesCount;
             utility += weight;
         }
-        System.out.println(utility);
         return utility;
     }
 
