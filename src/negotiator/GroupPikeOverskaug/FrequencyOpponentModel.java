@@ -17,7 +17,7 @@ public class FrequencyOpponentModel
 {
     UtilitySpace utilitySpace;
     HashMap<Issue, HashMap<Value , Integer>> frequencyMap = new HashMap<Issue, HashMap<Value , Integer>>();
-    double totalCount = 0;
+    double bidCount = 0;
 
     public FrequencyOpponentModel(UtilitySpace utilitySpace) {
         this.utilitySpace = utilitySpace;
@@ -35,10 +35,12 @@ public class FrequencyOpponentModel
         for (int issueIndex = 0; issueIndex < bid.getIssues().size(); issueIndex++) {
             Issue issue = bid.getIssues().get(issueIndex);
             Value issueValue = findValue(bid, issueIndex);
-
-            HashMap<Value, Integer> valueMap = frequencyMap.get(issue);valueMap.put(issueValue, valueMap.get(issueValue) + 1);
-            totalCount++;
+            HashMap<Value, Integer> valueMap = frequencyMap.get(issue);
+            valueMap.put(issueValue, valueMap.get(issueValue) + 1);
+//            System.out.println(valueMap);
         }
+        bidCount++;
+        System.out.println("**************************");
     }
 
     public double getUtility(Bid bid) {
@@ -48,7 +50,7 @@ public class FrequencyOpponentModel
             Value issueValue = findValue(bid, issueIndex);
 
             HashMap<Value, Integer> valueMap = frequencyMap.get(issue);
-            double weight = valueMap.get(issueValue) / totalCount;
+            double weight = valueMap.get(issueValue) / bidCount;
             utility += weight;
         }
         System.out.println(utility);
