@@ -87,18 +87,14 @@ public class GroupPikeOverskaug extends AbstractNegotiationParty {
             AgentID agentId = offer.getAgent();
             try {
                 lastUtility = utilitySpace.getUtility(lastBid);
-                if (opponentModels.size() == 0) {
-                    for (int i = 0; i < getNumberOfParties() - 1; i++) {
-                        opponentModels.put(action.getAgent(), new FrequencyOpponentModel(utilitySpace));
-                    }
+                if (opponentModels.get(action.getAgent()) == null) {
+                    opponentModels.put(action.getAgent(), new FrequencyOpponentModel(utilitySpace));
                 }
                 opponentModels.get(agentId).updateModel(lastBid);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-
-		// Here you can listen to other parties' messages	*/
 	}
 
     public Bid findBestBid() {
