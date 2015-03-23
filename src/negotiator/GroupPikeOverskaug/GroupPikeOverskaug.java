@@ -61,7 +61,7 @@ public class GroupPikeOverskaug extends AbstractNegotiationParty {
 	 */
 	@Override
 	public Action chooseAction(List<Class> validActions) {
-        utilityThreshold = concede(0.5); //todo set minUtility based on time?
+        utilityThreshold = concede();
         if (!validActions.contains(Accept.class) || lastUtility < utilityThreshold) {
 			return new Offer(findBestBid());
 		}
@@ -116,8 +116,16 @@ public class GroupPikeOverskaug extends AbstractNegotiationParty {
         return bidList;
     }
 
-    public double concede(double minUtility) {
-        //TODO expand concede tactic to be more dynamic?
+    public double concede() {
+        double remainingTimeRatio = 1 - timeline.getCurrentTime() / timeline.getTotalTime();
+        double minUtility = 0;
+        if (remainingTimeRatio > 0.5) {
+            minUtility = 0.8;
+        } else if (remainingTimeRatio > 0.1) {
+            minUtility = 0.6;
+        } else {
+            minUtility = 0.3;
+        }
         return boulware(minUtility, MAX_UTILITY, timeline.getCurrentTime(), timeline.getTotalTime());
     }
 
