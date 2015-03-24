@@ -9,6 +9,11 @@
                     partyName="Group Pike Overskaug"
                     protocolClassPath="negotiator.protocol.AlternatingOfferCounterOfferProtocol"/>
             <partyRepItem
+                    description="Agent that acts semi-random for testing purposes"
+                    classPath="negotiator.GroupPikeOverskaug.RandomTestingAgent"
+                    partyName="Random Testing Agent"
+                    protocolClassPath="negotiator.protocol.AlternatingOfferCounterOfferProtocol"/>
+            <partyRepItem
                     description="Deadline-based boulware agent"
                     classPath="negotiator.parties.BoulwareNegotiationParty"
                     partyName="Boulware"

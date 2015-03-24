@@ -1,6 +1,7 @@
 package negotiator.GroupPikeOverskaug;
 
 import negotiator.Bid;
+import negotiator.Timeline;
 import negotiator.issue.Issue;
 import negotiator.issue.IssueDiscrete;
 import negotiator.issue.Value;
@@ -15,17 +16,19 @@ import java.util.List;
  */
 public class FrequencyOpponentModel
 {
-    UtilitySpace utilitySpace;
-    HashMap<Issue, HashMap<Value , Integer>> frequencyMap = new HashMap<Issue, HashMap<Value , Integer>>();
-    double totalValuesCount = 0;
+    private UtilitySpace utilitySpace;
+    private HashMap<Issue, HashMap<Value , Double>> frequencyMap = new HashMap<Issue, HashMap<Value , Double>>();
+    private double totalValuesCount = 0;
+    private Timeline timeline;
 
-    public FrequencyOpponentModel(UtilitySpace utilitySpace) {
+    public FrequencyOpponentModel(UtilitySpace utilitySpace, Timeline timeline) {
         this.utilitySpace = utilitySpace;
+        this.timeline = timeline;
         for (Issue issue : utilitySpace.getDomain().getIssues()) {
             List<ValueDiscrete> values = ((IssueDiscrete)issue).getValues();
-            HashMap<Value, Integer> valueMap = new HashMap<Value, Integer>();
+            HashMap<Value, Double> valueMap = new HashMap<Value, Double>();
             for (Value value : values) {
-                valueMap.put(value, 0);
+                valueMap.put(value, 0.0);
             }
             frequencyMap.put(issue, valueMap);
         }
@@ -35,10 +38,18 @@ public class FrequencyOpponentModel
         for (int issueIndex = 0; issueIndex < bid.getIssues().size(); issueIndex++) {
             Issue issue = bid.getIssues().get(issueIndex);
             Value issueValue = findValue(bid, issueIndex);
-            HashMap<Value, Integer> valueMap = frequencyMap.get(issue);
-            valueMap.put(issueValue, valueMap.get(issueValue) + 1);
-            totalValuesCount++;
+            HashMap<Value, Double> valueMap = frequencyMap.get(issue);
+            double weight = concedeOverTime();
+            valueMap.put(issueValue, valueMap.get(issueValue) + weight);
+            totalValuesCount = totalValuesCount + weight;
         }
+        UtilityAnalyzer.printBeliefState(frequencyMap);
+    }
+
+    private double concedeOverTime() {
+        double remainingTimeRatio = timeline.getCurrentTime() / timeline.getTotalTime();
+        double concedeValue = Math.pow(remainingTimeRatio, 3.25);
+        return 1.0;
     }
 
     public double getUtility(Bid bid) {
@@ -47,7 +58,7 @@ public class FrequencyOpponentModel
             Issue issue = bid.getIssues().get(issueIndex);
             Value issueValue = findValue(bid, issueIndex);
 
-            HashMap<Value, Integer> valueMap = frequencyMap.get(issue);
+            HashMap<Value, Double> valueMap = frequencyMap.get(issue);
             double weight = valueMap.get(issueValue) / totalValuesCount;
             utility += weight;
         }
