@@ -2,8 +2,6 @@ package negotiator.GroupPikeOverskaug;
 
 import java.util.*;
 
-import agents.bayesianopponentmodel.BayesianOpponentModel;
-import agents.bayesianopponentmodel.OpponentModel;
 import negotiator.AgentID;
 import negotiator.Bid;
 import negotiator.DeadlineType;
@@ -13,7 +11,6 @@ import negotiator.actions.Action;
 import negotiator.actions.Offer;
 import negotiator.issue.Issue;
 import negotiator.issue.IssueDiscrete;
-import negotiator.issue.Value;
 import negotiator.issue.ValueDiscrete;
 import negotiator.parties.AbstractNegotiationParty;
 import negotiator.utility.UtilitySpace;
