@@ -42,7 +42,6 @@ public class GroupPikeOverskaug extends AbstractNegotiationParty {
 		super(utilitySpace, deadlines, timeline, randomSeed);
 
         issues = utilitySpace.getDomain().getIssues();
-        UtilityAnalyzer.printUtilitySpace(utilitySpace, "PikeOverskaugAgent");
         try {
             possibleBids = generateBids(issues, 0, issues.size(), null);
         } catch (Exception e) {
@@ -86,7 +85,7 @@ public class GroupPikeOverskaug extends AbstractNegotiationParty {
             try {
                 lastUtility = utilitySpace.getUtility(lastBid);
                 if (opponentModels.get(action.getAgent()) == null) {
-                    opponentModels.put(action.getAgent(), new FrequencyOpponentModel(utilitySpace, timeline, "PikeOverskaugAgent"));
+                    opponentModels.put(action.getAgent(), new FrequencyOpponentModel(utilitySpace, timeline));
                 }
                 opponentModels.get(agentId).updateModel(lastBid);
             } catch (Exception e) {

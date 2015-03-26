@@ -16,16 +16,12 @@ import java.util.List;
  */
 public class FrequencyOpponentModel
 {
-    private UtilitySpace utilitySpace;
-    private String agentName;
     private HashMap<Issue, HashMap<Value , Double>> frequencyMap = new HashMap<Issue, HashMap<Value , Double>>();
     private double totalValuesCount = 0;
     private Timeline timeline;
 
-    public FrequencyOpponentModel(UtilitySpace utilitySpace, Timeline timeline, String agentName) {
-        this.utilitySpace = utilitySpace;
+    public FrequencyOpponentModel(UtilitySpace utilitySpace, Timeline timeline) {
         this.timeline = timeline;
-        this.agentName = agentName;
         for (Issue issue : utilitySpace.getDomain().getIssues()) {
             List<ValueDiscrete> values = ((IssueDiscrete)issue).getValues();
             HashMap<Value, Double> valueMap = new HashMap<Value, Double>();
@@ -45,21 +41,13 @@ public class FrequencyOpponentModel
             valueMap.put(issueValue, valueMap.get(issueValue) + weight);
             totalValuesCount = totalValuesCount + weight;
         }
-        UtilityAnalyzer.compareOpponentModelToRealModel(frequencyMap, agentName);
-//        UtilityAnalyzer.printBeliefState(frequencyMap);
     }
 
     private double weightFunction() {
         double remainingTimeRatio = timeline.getCurrentTime() / timeline.getTotalTime();
-        double weight1 = 1.0;
-        double weight2 = Math.pow(1-remainingTimeRatio, Math.E);
-        double weight3 = Math.pow(1-remainingTimeRatio, 1.0/Math.E);
-        double weight4 = Math.pow(remainingTimeRatio, 1.0/Math.E);
-        double weight5 = Math.pow(remainingTimeRatio, Math.E);
-        double weight6 = Math.pow(remainingTimeRatio, 4.0);
-        double weight7 = Math.pow(remainingTimeRatio, 3.0);
-        double weight8 = Math.pow(remainingTimeRatio, 2.0);
-        return weight5;
+        double weight = Math.pow(remainingTimeRatio, Math.E);
+
+        return weight;
     }
 
     public double getUtility(Bid bid) {
