@@ -41,7 +41,7 @@ public class FrequencyOpponentModel
             Issue issue = bid.getIssues().get(issueIndex);
             Value issueValue = findValue(bid, issueIndex);
             HashMap<Value, Double> valueMap = frequencyMap.get(issue);
-            double weight = concedeOverTime();
+            double weight = weightFunction();
             valueMap.put(issueValue, valueMap.get(issueValue) + weight);
             totalValuesCount = totalValuesCount + weight;
         }
@@ -49,17 +49,17 @@ public class FrequencyOpponentModel
 //        UtilityAnalyzer.printBeliefState(frequencyMap);
     }
 
-    private double concedeOverTime() {
+    private double weightFunction() {
         double remainingTimeRatio = timeline.getCurrentTime() / timeline.getTotalTime();
-        double concedeValue1 = 1.0;
-        double concedeValue2 = Math.pow(1-remainingTimeRatio, Math.E);
-        double concedeValue3 = Math.pow(1-remainingTimeRatio, 1.0/Math.E);
-        double concedeValue4 = Math.pow(remainingTimeRatio, 1.0/Math.E);
-        double concedeValue5 = Math.pow(remainingTimeRatio, Math.E);
-        double concedeValue6 = Math.pow(remainingTimeRatio, 4.0);
-        double concedeValue7 = Math.pow(remainingTimeRatio, 3.0);
-        double concedeValue8 = Math.pow(remainingTimeRatio, 2.0);
-        return concedeValue8;
+        double weight1 = 1.0;
+        double weight2 = Math.pow(1-remainingTimeRatio, Math.E);
+        double weight3 = Math.pow(1-remainingTimeRatio, 1.0/Math.E);
+        double weight4 = Math.pow(remainingTimeRatio, 1.0/Math.E);
+        double weight5 = Math.pow(remainingTimeRatio, Math.E);
+        double weight6 = Math.pow(remainingTimeRatio, 4.0);
+        double weight7 = Math.pow(remainingTimeRatio, 3.0);
+        double weight8 = Math.pow(remainingTimeRatio, 2.0);
+        return weight5;
     }
 
     public double getUtility(Bid bid) {
