@@ -30,37 +30,18 @@ public class UtilityAnalyzer
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-        try {
-            Bid bid = utilitySpace.getDomain().getRandomBid();
-            System.out.println(bid);
-            System.out.println(utilitySpace.getEvaluation(1, bid));
-            ArrayList<Issue> issues = utilitySpace.getDomain().getIssues();
-            for (int issueIndex = 0; issueIndex < issues.size(); issueIndex++) {
-                Issue currentIssue = issues.get(issueIndex);
-                System.out.println(utilitySpace.getDomain().getIssue(issueIndex).getNumber());
-                List<ValueDiscrete> values = ((IssueDiscrete) issues.get(issueIndex)).getValues();
-                for (int valueIndex = 0; valueIndex < values.size(); valueIndex++) {
-                    bid.setValue(issueIndex+1, values.get(valueIndex));
-                    System.out.println(bid);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public static void printBeliefState(HashMap<Issue, HashMap<Value , Double>> frequencyMap) {
-//        for (Issue issue : frequencyMap.keySet()) {
-//            System.out.print(issue + "= [");
-//            for (Value value : frequencyMap.get(issue).keySet()) {
-//                double highestIssueValue = findHighestIssueValue(frequencyMap, issue);
-//                System.out.print((frequencyMap.get(issue).get(value)/highestIssueValue) + ", ");
-//            }
-//            System.out.println("]");
-//        }
-//        System.out.println();
+        for (Issue issue : frequencyMap.keySet()) {
+            System.out.print(issue + "= [");
+            for (Value value : frequencyMap.get(issue).keySet()) {
+                double highestIssueValue = findHighestIssueValue(frequencyMap, issue);
+                System.out.print(issue.getName() + "=" + (frequencyMap.get(issue).get(value)/highestIssueValue) + ", ");
+            }
+            System.out.println("]");
+        }
+        System.out.println();
     }
 
     private static double findHighestIssueValue(HashMap<Issue, HashMap<Value , Double>> frequencyMap, Issue issue) {
@@ -73,8 +54,43 @@ public class UtilityAnalyzer
         return highest;
     }
 
-    private static void compareOpponentModelToRealModel(HashMap<Issue, HashMap<Value , Double>> frequencyMap, String agentName) {
+    public static void compareOpponentModelToRealModel(HashMap<Issue, HashMap<Value , Double>> frequencyMap, String agentName) {
+        if (agentName.equals("RandomAgent")) {
+            return;
+        }
+        UtilitySpace staticUtilitySpace = utilitySpaceList.get(agentName);
+        try {
+            System.out.println("***********************" + agentName + "***********************");
+            Bid bid = staticUtilitySpace.getDomain().getRandomBid();
+            ArrayList<Issue> issues = staticUtilitySpace.getDomain().getIssues();
+            HashMap<String, HashMap<Value , Double>> nameMap = createNameKeyedMap(frequencyMap);
+            for (int issueIndex = 0; issueIndex < issues.size(); issueIndex++) {
+                Issue issue = issues.get(issueIndex);
+                List<ValueDiscrete> values = ((IssueDiscrete) issue).getValues();
+                ArrayList<Value> valueList = new ArrayList<Value>();
+                valueList.addAll(nameMap.get(issue.getName()).keySet());
+                for (int valueIndex = 0; valueIndex < values.size(); valueIndex++) {
+                    double highestIssueValue = findHighestIssueValue(frequencyMap, issue);
+                    bid.setValue(issueIndex+1, values.get(valueIndex));
+                    System.out.print(issue.getName() + " - " + bid.getValue(issueIndex+1) +"=" + valueList.get(valueIndex).toString() +" -> ");
 
+                    System.out.print(staticUtilitySpace.getEvaluation(issueIndex + 1, bid) + " : ");
+                    System.out.print(nameMap.get(issue.getName()).get(valueList.get(valueIndex)) / highestIssueValue);
+                    System.out.println();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private static HashMap<String, HashMap<Value , Double>> createNameKeyedMap(HashMap<Issue, HashMap<Value , Double>> frequencyMap) {
+        HashMap<String, HashMap<Value , Double>> nameMap = new HashMap<String, HashMap<Value , Double>>();
+        for (Issue issue : frequencyMap.keySet()) {
+            nameMap.put(issue.getName(), frequencyMap.get(issue));
+        }
+        return nameMap;
     }
 
 }

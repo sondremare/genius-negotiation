@@ -87,7 +87,7 @@ public class RandomTestingAgent extends AbstractNegotiationParty {
             try {
                 lastUtility = utilitySpace.getUtility(lastBid);
                 if (opponentModels.get(action.getAgent()) == null) {
-                    opponentModels.put(action.getAgent(), new FrequencyOpponentModel(utilitySpace, timeline));
+                    opponentModels.put(action.getAgent(), new FrequencyOpponentModel(utilitySpace, timeline, "RandomAgent"));
                 }
                 opponentModels.get(agentId).updateModel(lastBid);
             } catch (Exception e) {
