@@ -58,7 +58,8 @@ public class FrequencyOpponentModel
         double concedeValue5 = Math.pow(remainingTimeRatio, Math.E);
         double concedeValue6 = Math.pow(remainingTimeRatio, 4.0);
         double concedeValue7 = Math.pow(remainingTimeRatio, 3.0);
-        return concedeValue1;
+        double concedeValue8 = Math.pow(remainingTimeRatio, 2.0);
+        return concedeValue8;
     }
 
     public double getUtility(Bid bid) {
