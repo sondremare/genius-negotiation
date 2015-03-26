@@ -63,8 +63,15 @@ public class GroupPikeOverskaug extends AbstractNegotiationParty {
 	@Override
 	public Action chooseAction(List<Class> validActions) {
         utilityThreshold = concede();
-        if (!validActions.contains(Accept.class) || lastUtility < utilityThreshold) {
-			return new Offer(findBestBid());
+        Bid bestBid = findBestBid();
+        double bestBidUtility = 0;
+        try {
+            bestBidUtility = utilitySpace.getUtility(bestBid);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (!validActions.contains(Accept.class) || bestBidUtility > lastUtility) {
+			return new Offer(bestBid);
 		}
 		else {
 			return new Accept();
