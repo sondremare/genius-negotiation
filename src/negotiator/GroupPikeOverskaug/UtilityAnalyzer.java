@@ -7,9 +7,12 @@ import negotiator.issue.Value;
 import negotiator.issue.ValueDiscrete;
 import negotiator.utility.UtilitySpace;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Markus on 24.03.2015.
@@ -17,9 +20,26 @@ import java.util.List;
 public class UtilityAnalyzer
 {
     private static HashMap<String, UtilitySpace> utilitySpaceList = new HashMap<String, UtilitySpace>();
+    private static PrintWriter log;
+    private static UtilitySpace staticUtilitySpace = null;
+
+    private static void initLog() {
+        try
+        {
+            log = new PrintWriter("log.txt");
+        } catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public static void storeUtilitySpace(UtilitySpace utilitySpace) {
+        staticUtilitySpace = utilitySpace;
+    }
 
 
     public static void printUtilitySpace(UtilitySpace utilitySpace, String agentName) {
+        if (log == null) initLog();
         utilitySpaceList.put(agentName, utilitySpace);
         System.out.println("Here are the preferences " + agentName);
         try {
@@ -33,6 +53,7 @@ public class UtilityAnalyzer
     }
 
     public static void printBeliefState(HashMap<Issue, HashMap<Value , Double>> frequencyMap) {
+        if (log == null) initLog();
         for (Issue issue : frequencyMap.keySet()) {
             System.out.print(issue + "= [");
             for (Value value : frequencyMap.get(issue).keySet()) {
@@ -55,28 +76,28 @@ public class UtilityAnalyzer
     }
 
     public static void compareOpponentModelToRealModel(HashMap<Issue, HashMap<Value , Double>> frequencyMap, String agentName) {
-        if (agentName.equals("RandomAgent")) {
+        if (log == null) initLog();
+        if (agentName.equals("RandomTestingAgent")) {
             return;
         }
-        UtilitySpace staticUtilitySpace = utilitySpaceList.get(agentName);
         try {
-            System.out.println("***********************" + agentName + "***********************");
+//            logln("\n***********************" + agentName + "***********************");
+            logln("\n");
             Bid bid = staticUtilitySpace.getDomain().getRandomBid();
             ArrayList<Issue> issues = staticUtilitySpace.getDomain().getIssues();
             HashMap<String, HashMap<Value , Double>> nameMap = createNameKeyedMap(frequencyMap);
             for (int issueIndex = 0; issueIndex < issues.size(); issueIndex++) {
                 Issue issue = issues.get(issueIndex);
-                List<ValueDiscrete> values = ((IssueDiscrete) issue).getValues();
-                ArrayList<Value> valueList = new ArrayList<Value>();
-                valueList.addAll(nameMap.get(issue.getName()).keySet());
-                for (int valueIndex = 0; valueIndex < values.size(); valueIndex++) {
+                List<ValueDiscrete> opponentValues = ((IssueDiscrete) issue).getValues();
+                ArrayList<Value> modelValueList = new ArrayList<Value>();
+                modelValueList.addAll(nameMap.get(issue.getName()).keySet());
+                for (int valueIndex = 0; valueIndex < opponentValues.size(); valueIndex++) {
                     double highestIssueValue = findHighestIssueValue(frequencyMap, issue);
-                    bid.setValue(issueIndex+1, values.get(valueIndex));
-                    System.out.print(issue.getName() + " - " + bid.getValue(issueIndex+1) +"=" + valueList.get(valueIndex).toString() +" -> ");
-
-                    System.out.print(staticUtilitySpace.getEvaluation(issueIndex + 1, bid) + " : ");
-                    System.out.print(nameMap.get(issue.getName()).get(valueList.get(valueIndex)) / highestIssueValue);
-                    System.out.println();
+                    bid.setValue(issueIndex + 1, modelValueList.get(valueIndex));
+                    log("\"" + issue.getName() + "\";\"" /*+ bid.getValue(issueIndex + 1) + "=" */ + modelValueList.get(valueIndex).toString() + "\";\"");
+                    log(String.format(Locale.GERMANY, "%.2f", staticUtilitySpace.getEvaluation(issueIndex + 1, bid)) + "\";\"");
+                    log("" + (String.format(Locale.GERMANY, "%.2f", nameMap.get(issue.getName()).get(modelValueList.get(valueIndex)) / highestIssueValue)) + "\"");
+                    logln("");
                 }
             }
         } catch (Exception e) {
@@ -91,6 +112,14 @@ public class UtilityAnalyzer
             nameMap.put(issue.getName(), frequencyMap.get(issue));
         }
         return nameMap;
+    }
+
+    private static void logln(String writeString) {
+        log.println(writeString);
+    }
+
+    private static void log(String writeString) {
+        log.print(writeString);
     }
 
 }

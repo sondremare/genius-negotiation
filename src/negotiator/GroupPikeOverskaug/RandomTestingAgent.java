@@ -43,6 +43,7 @@ public class RandomTestingAgent extends AbstractNegotiationParty {
         super(utilitySpace, deadlines, timeline, randomSeed);
 
         issues = utilitySpace.getDomain().getIssues();
+        UtilityAnalyzer.storeUtilitySpace(utilitySpace);
         UtilityAnalyzer.printUtilitySpace(utilitySpace, "RandomTestingAgent");
         try {
             possibleBids = generateBids(issues, 0, issues.size(), null);
@@ -148,6 +149,7 @@ public class RandomTestingAgent extends AbstractNegotiationParty {
             }
         }
         return bidList;
+
     }
 
     private class BidComparator implements Comparator {
