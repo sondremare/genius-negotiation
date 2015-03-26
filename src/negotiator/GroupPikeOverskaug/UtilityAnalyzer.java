@@ -37,7 +37,7 @@ public class UtilityAnalyzer
             System.out.print(issue + "= [");
             for (Value value : frequencyMap.get(issue).keySet()) {
                 double highestIssueValue = findHighestIssueValue(frequencyMap, issue);
-                System.out.print(issue.getName() + "=" + (frequencyMap.get(issue).get(value)/highestIssueValue) + ", ");
+                System.out.print((frequencyMap.get(issue).get(value)/highestIssueValue) + ", ");
             }
             System.out.println("]");
         }

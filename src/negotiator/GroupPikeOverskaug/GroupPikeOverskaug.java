@@ -42,7 +42,7 @@ public class GroupPikeOverskaug extends AbstractNegotiationParty {
 		super(utilitySpace, deadlines, timeline, randomSeed);
 
         issues = utilitySpace.getDomain().getIssues();
-        UtilityAnalyzer.printUtilitySpace(utilitySpace, "GroupPikeOverskaug");
+        UtilityAnalyzer.printUtilitySpace(utilitySpace, "PikeOverskaugAgent");
         try {
             possibleBids = generateBids(issues, 0, issues.size(), null);
         } catch (Exception e) {

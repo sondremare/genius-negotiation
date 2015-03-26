@@ -45,15 +45,15 @@ public class FrequencyOpponentModel
             valueMap.put(issueValue, valueMap.get(issueValue) + weight);
             totalValuesCount = totalValuesCount + weight;
         }
-        //UtilityAnalyzer.compareOpponentModelToRealModel(frequencyMap, agentName);
-        UtilityAnalyzer.printBeliefState(frequencyMap);
+//        UtilityAnalyzer.compareOpponentModelToRealModel(frequencyMap, agentName);
+//        UtilityAnalyzer.printBeliefState(frequencyMap);
     }
 
     private double concedeOverTime() {
         double remainingTimeRatio = timeline.getCurrentTime() / timeline.getTotalTime();
         double concedeValue = Math.pow(remainingTimeRatio, 3.25);
-        return 1.0;
-//        return concedeValue;
+//        return 1.0;
+        return concedeValue;
     }
 
     public double getUtility(Bid bid) {
