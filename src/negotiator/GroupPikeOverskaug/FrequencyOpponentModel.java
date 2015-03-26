@@ -51,9 +51,14 @@ public class FrequencyOpponentModel
 
     private double concedeOverTime() {
         double remainingTimeRatio = timeline.getCurrentTime() / timeline.getTotalTime();
-        double concedeValue = Math.pow(remainingTimeRatio, 3.25);
-        return 1.0;
-//        return concedeValue;
+        double concedeValue1 = 1.0;
+        double concedeValue2 = Math.pow(1-remainingTimeRatio, Math.E);
+        double concedeValue3 = Math.pow(1-remainingTimeRatio, 1.0/Math.E);
+        double concedeValue4 = Math.pow(remainingTimeRatio, 1.0/Math.E);
+        double concedeValue5 = Math.pow(remainingTimeRatio, Math.E);
+        double concedeValue6 = Math.pow(remainingTimeRatio, 4.0);
+        double concedeValue7 = Math.pow(remainingTimeRatio, 3.0);
+        return concedeValue1;
     }
 
     public double getUtility(Bid bid) {

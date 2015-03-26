@@ -77,12 +77,11 @@ public class UtilityAnalyzer
 
     public static void compareOpponentModelToRealModel(HashMap<Issue, HashMap<Value , Double>> frequencyMap, String agentName) {
         if (log == null) initLog();
-        if (agentName.equals("RandomTestingAgent")) {
+        if (agentName.equals("RandomTestingAgent") || staticUtilitySpace==null) {
             return;
         }
         try {
 //            logln("\n***********************" + agentName + "***********************");
-            logln("\n");
             Bid bid = staticUtilitySpace.getDomain().getRandomBid();
             ArrayList<Issue> issues = staticUtilitySpace.getDomain().getIssues();
             HashMap<String, HashMap<Value , Double>> nameMap = createNameKeyedMap(frequencyMap);
@@ -95,8 +94,8 @@ public class UtilityAnalyzer
                     double highestIssueValue = findHighestIssueValue(frequencyMap, issue);
                     bid.setValue(issueIndex + 1, modelValueList.get(valueIndex));
                     log("\"" + issue.getName() + "\";\"" /*+ bid.getValue(issueIndex + 1) + "=" */ + modelValueList.get(valueIndex).toString() + "\";\"");
-                    log(String.format(Locale.GERMANY, "%.2f", staticUtilitySpace.getEvaluation(issueIndex + 1, bid)) + "\";\"");
-                    log("" + (String.format(Locale.GERMANY, "%.2f", nameMap.get(issue.getName()).get(modelValueList.get(valueIndex)) / highestIssueValue)) + "\"");
+                    log(String.format(Locale.GERMANY, "%.5f", staticUtilitySpace.getEvaluation(issueIndex + 1, bid)) + "\";\"");
+                    log("" + (String.format(Locale.GERMANY, "%.5f", nameMap.get(issue.getName()).get(modelValueList.get(valueIndex)) / highestIssueValue)) + "\"");
                     logln("");
                 }
             }

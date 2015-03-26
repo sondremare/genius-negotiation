@@ -99,8 +99,10 @@ public class RandomTestingAgent extends AbstractNegotiationParty {
 
     public Bid findRandomBid() {
         ArrayList<Bid> bids = listBids(possibleBids.getBidsOverThreshold(utilityThreshold));
-        Random random = new Random();
-        return bids.get(random.nextInt(bids.size()));
+//        Random random = new Random();
+//        return bids.get(random.nextInt(bids.size()));
+        Collections.sort(bids, new BidComparator());
+        return bids.get(0);
     }
 
     public ArrayList<Bid> listBids(SortedMap<Double, ArrayList<Bid>> bidMap) {
