@@ -4,6 +4,8 @@ import negotiator.Bid;
 
 import java.util.*;
 
+/** Wrapper class for java.util.TreeMap to enable storing of several values per key */
+
 public class MultiTreeMap {
     private TreeMap<Double, ArrayList<Bid>> treeMap;
 
@@ -37,6 +39,7 @@ public class MultiTreeMap {
         return treeMap;
     }
 
+    /* Returns a map with bids with utility values over a given threshold */
     public SortedMap<Double, ArrayList<Bid>> getBidsOverThreshold(double threshold) {
         return treeMap.tailMap(threshold);
     }

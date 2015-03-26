@@ -95,6 +95,7 @@ public class GroupPikeOverskaug extends AbstractNegotiationParty {
         }
 	}
 
+    /* Returns the best bid in regards to the opposing agents expected utility */
     public Bid findBestBid() {
         ArrayList<Bid> bids = listBids(possibleBids.getBidsOverThreshold(utilityThreshold));
         Collections.sort(bids, new BidComparator());
@@ -131,6 +132,9 @@ public class GroupPikeOverskaug extends AbstractNegotiationParty {
         return minUtility + (maxUtility - minUtility) * Math.pow(1 - Math.min(currentTime, totalTime)/totalTime, 1/Math.E);
     }
 
+    /**
+     * Generates all possible bids from a set of issues, and returns them in a map with utility as the key.
+     */
     public MultiTreeMap generateBids(ArrayList<Issue> issues, int index, int size, Bid bid) throws Exception {
         MultiTreeMap bidList = new MultiTreeMap();
         List<ValueDiscrete> values = ((IssueDiscrete) issues.get(index)).getValues();
@@ -149,6 +153,8 @@ public class GroupPikeOverskaug extends AbstractNegotiationParty {
         return bidList;
     }
 
+    /* Comparator class responsible for comparing bids based on the opposing agents opponent model.
+    *  It compares the combined expected utility for all agents for a given bid */
     private class BidComparator implements Comparator {
 
         @Override
