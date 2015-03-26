@@ -17,13 +17,15 @@ import java.util.List;
 public class FrequencyOpponentModel
 {
     private UtilitySpace utilitySpace;
+    private String agentName;
     private HashMap<Issue, HashMap<Value , Double>> frequencyMap = new HashMap<Issue, HashMap<Value , Double>>();
     private double totalValuesCount = 0;
     private Timeline timeline;
 
-    public FrequencyOpponentModel(UtilitySpace utilitySpace, Timeline timeline) {
+    public FrequencyOpponentModel(UtilitySpace utilitySpace, Timeline timeline, String agentName) {
         this.utilitySpace = utilitySpace;
         this.timeline = timeline;
+        this.agentName = agentName;
         for (Issue issue : utilitySpace.getDomain().getIssues()) {
             List<ValueDiscrete> values = ((IssueDiscrete)issue).getValues();
             HashMap<Value, Double> valueMap = new HashMap<Value, Double>();
@@ -43,13 +45,15 @@ public class FrequencyOpponentModel
             valueMap.put(issueValue, valueMap.get(issueValue) + weight);
             totalValuesCount = totalValuesCount + weight;
         }
-        UtilityAnalyzer.printBeliefState(frequencyMap);
+        UtilityAnalyzer.compareOpponentModelToRealModel(frequencyMap, agentName);
+//        UtilityAnalyzer.printBeliefState(frequencyMap);
     }
 
     private double concedeOverTime() {
         double remainingTimeRatio = timeline.getCurrentTime() / timeline.getTotalTime();
         double concedeValue = Math.pow(remainingTimeRatio, 3.25);
         return 1.0;
+//        return concedeValue;
     }
 
     public double getUtility(Bid bid) {
